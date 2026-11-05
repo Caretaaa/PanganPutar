@@ -1,0 +1,215 @@
+[
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+        "timestamp": 1793612758877.205,
+        "url": "http://127.0.0.1:8765/"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+        "timestamp": 1793612764676.002,
+        "url": "http://127.0.0.1:8765/"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+        "timestamp": 1793612764676.093,
+        "url": "http://127.0.0.1:8765/"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+        "timestamp": 1793612767960.292,
+        "url": "http://127.0.0.1:8765/"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[.WebGL-0x68c1c64ca00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "timestamp": 1793612767960.451,
+        "url": "http://127.0.0.1:8765/"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[.WebGL-0x68c1c64ca00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "timestamp": 1793612768100.333,
+        "url": "http://127.0.0.1:8765/"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[.WebGL-0x68c1c64ca00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+        "timestamp": 1793612768169.305,
+        "url": "http://127.0.0.1:8765/"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[.WebGL-0x68c1c64ca00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+        "timestamp": 1793612768202.943,
+        "url": "http://127.0.0.1:8765/"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+        "timestamp": 1793612970988.106,
+        "url": "http://10.0.2.2:3000/api/listings?limit=48",
+        "networkRequestId": "2870.937"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+        "timestamp": 1793612970991.28,
+        "url": "http://10.0.2.2:3000/api/listings?limit=48",
+        "networkRequestId": "2870.938"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+        "timestamp": 1793613142924.805,
+        "url": "http://10.0.2.2:3000/api/listings/contoh-1",
+        "networkRequestId": "2870.941"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+        "timestamp": 1793613339536.347,
+        "url": "http://10.0.2.2:3000/api/payments/midtrans/snap",
+        "networkRequestId": "2870.942"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+        "timestamp": 1793613339537.291,
+        "url": "http://10.0.2.2:3000/api/listings/contoh-1",
+        "networkRequestId": "2870.943"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+        "timestamp": 1793613462412.31,
+        "url": "http://10.0.2.2:3000/api/listings?limit=48",
+        "networkRequestId": "2870.944"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+        "timestamp": 1793613556916.002,
+        "url": "http://10.0.2.2:3000/api/listings?limit=48&q=makanan+tidak+ditemukan+xyzz",
+        "networkRequestId": "2870.945"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+        "timestamp": 1793613585292.866,
+        "url": "http://10.0.2.2:3000/api/listings?limit=48",
+        "networkRequestId": "2870.946"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+        "timestamp": 1793613639305.139,
+        "url": "http://10.0.2.2:3000/api/listings?limit=48",
+        "networkRequestId": "2870.947"
+      }
+    }
+  }
+]

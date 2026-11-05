@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+  
+    {
+      "name": "PanganPutar (Release Supabase)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "dartMode": "release",
+      "toolArgs": [
+        "--dart-define-from-file=config/supabase.production.json",
+        "--web-port=8080"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function ownerUid() { return request.auth.uid; }
+
+    match /profiles/{uid} {
+      allow read: if signedIn() && uid == ownerUid();
+      allow create, update: if signedIn() && uid == ownerUid()
+        && !request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(['role','verification_status','face_identity_id','face_verified_at','weekly_porsi','weekly_pesanan']);
+      allow delete: if false;
+    }
+
+    match /food_listings/{id} {
+      allow read: if true;
+      allow create, update, delete: if false;
+    }
+
+    match /stores/{id} {
+      allow read: if signedIn();
+      allow create, update, delete: if false;
+    }
+
+    match /orders/{id} {
+      allow read: if signedIn() && (resource.data.recipient_id == ownerUid() || resource.data.store_owner_id == ownerUid());
+      allow create, update, delete: if false;
+    }
+
+    match /impact_stats/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /face_identities/{faceId} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

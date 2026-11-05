@@ -1,0 +1,6 @@
+{
+  "PRODUCTION_MODE": "false",
+  "SUPABASE_URL": "https://xhllsohvlhfmkthywmcq.supabase.co",
+  "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_0sBxwAfGYfOWQEJvsV_qPA_pdBKAxAa",
+  "SUPABASE_AUTH_REDIRECT_URL": "id.panganputar.app://auth/callback"
+}

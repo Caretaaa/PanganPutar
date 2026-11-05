@@ -1,0 +1,76 @@
+[
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+        "timestamp": 1793613741225.093,
+        "url": "http://127.0.0.1:8765/"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+        "timestamp": 1793613747742.758,
+        "url": "http://127.0.0.1:8765/"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+        "timestamp": 1793613747742.841,
+        "url": "http://127.0.0.1:8765/"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "rendering",
+        "level": "warning",
+        "text": "[]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+        "timestamp": 1793613750172.06,
+        "url": "http://127.0.0.1:8765/"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+        "timestamp": 1793613885091.721,
+        "url": "http://10.0.2.2:3000/api/listings?limit=48",
+        "networkRequestId": "2870.1869"
+      }
+    }
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: net::ERR_CONNECTION_TIMED_OUT",
+        "timestamp": 1793613885093.942,
+        "url": "http://10.0.2.2:3000/api/listings?limit=48",
+        "networkRequestId": "2870.1870"
+      }
+    }
+  }
+]

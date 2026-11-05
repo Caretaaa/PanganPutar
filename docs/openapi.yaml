@@ -1,0 +1,144 @@
+openapi: 3.0.3
+info:
+  title: PanganPutar API (backend inti)
+  version: "1.0"
+  description: >
+    Semua endpoint berjalan di Supabase. Data tabel lewat PostgREST
+    (RLS yang ketat), aksi transaksional lewat RPC, pembayaran & push lewat
+    Edge Functions. Kunci service-role tidak pernah keluar dari server.
+servers:
+  - url: https://{project}.supabase.co
+    variables:
+      project: { default: xhllsohvlhfmkthywmcq }
+  - url: https://{project}.supabase.co/functions/v1
+    variables:
+      project: { default: xhllsohvlhfmkthywmcq }
+
+components:
+  securitySchemes:
+    buyerJwt:             # JWT Supabase milik pengguna (RLS)
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Listing:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        category: { type: string }
+        price_rupiah: { type: integer }
+        quantity_available: { type: integer }
+        pickup_start: { type: string, format: date-time }
+        pickup_end: { type: string, format: date-time }
+    Notifikasi:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        kind:
+          type: string
+          enum: [pesanan_dikonfirmasi, siap_diambil, pengingat_ambil, info]
+        title: { type: string }
+        body: { type: string }
+        order_id: { type: string, format: uuid, nullable: true }
+        read_at: { type: string, format: date-time, nullable: true }
+
+security:
+  - buyerJwt: []
+
+paths:
+  /rest/v1/rpc/create_order:
+    post:
+      summary: Buat pesanan (reservasi stok atomik TTL 10 menit)
+      description: >
+        Stok dikunci FOR UPDATE; kuota harian server (maks 4 porsi /
+        2 pesanan). Mengembalikan pickup_token plaintext SEKALI —
+        server hanya menyimpan hash-nya.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [p_listing_id, p_store_id, p_quantity]
+              properties:
+                p_listing_id: { type: string, format: uuid }
+                p_store_id: { type: string, format: uuid }
+                p_quantity: { type: integer, minimum: 1, maximum: 4 }
+      responses:
+        "200": { description: order_id + pickup_token + reservation_expires_at }
+        default: { description: Penolakan (stok, kuota, window, verifikasi toko) }
+
+  /rest/v1/rpc/claim_pickup:
+    post:
+      summary: Serah-terima QR (dipanggil penyedia, hash token)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                p_store_id: { type: string, format: uuid }
+                p_token: { type: string }
+      responses:
+        "200": { description: order_id yang dituntaskan }
+        default: { description: token salah / QR bekas / bukan pemilik toko }
+
+  /rest/v1/rpc/nearby_listings:
+    post:
+      summary: Penawaran terdekat (PostGIS; toko terverifikasi berlokasi)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                p_lat: { type: number }
+                p_lng: { type: number }
+                p_radius_m: { type: integer, default: 8000 }
+                p_limit: { type: integer, default: 50 }
+      responses:
+        "200": { description: daftar listing + distance_m, urut jarak }
+
+  /rest/v1/notifications:
+    get:
+      summary: Notifikasi milik pengguna (RLS baca-sendiri)
+      description: PATCH read_at lewat endpoint yang sama (tandai baca).
+      responses:
+        "200": { description: daftar notifikasi (schema Notifikasi) }
+
+  /functions/v1/payments-snap:
+    post:
+      summary: Buat sesi Snap Midtrans (JWT pembeli wajib)
+      description: >
+        Server key MIDTRANS_SERVER_KEY tinggal di Edge Function env.
+        Nominal diverifikasi ke total pesanan di server — payload klien
+        tidak bisa memanipulasi jumlah.
+      responses:
+        "200": { description: token + redirect_url }
+        "403": { description: bukan pemilik pesanan / status salah }
+
+  /functions/v1/payments-status:
+    get:
+      summary: Pantau status pembayaran Midtrans pesanan miliknya
+      responses:
+        "200": { description: status/dibayar/menunggu/gagal/kedaluwarsa }
+
+  /functions/v1/payments-webhook:
+    post:
+      summary: NOTIF HTTP Midtrans (tanpa JWT; sha512 + konfirmasi ulang status)
+      description: >
+        Dipanggil Midtrans, BUKAN aplikasi. Alur: tanda tangan → log audit
+        `payment_events` → GET status Midtrans → mutasi idempoten tanpa
+        transisi mundur (finalize_paid_order / fail_payment_order).
+      security: []
+      responses:
+        "200": { description: ok / idempoten / ditolak-mundur }
+        "403": { description: tanda tangan tidak sah }
+        "502": { description: status API sama tidak terjangkau — tanpa mutasi }
+
+  /functions/v1/push-reminder:
+    post:
+      summary: Kirim push FCM untuk notifikasi pengingat (perlu server timer)
+      security: []
+      responses:
+        "200": { description: jumlah kirim; 0 bila belum dikonfigurasi }

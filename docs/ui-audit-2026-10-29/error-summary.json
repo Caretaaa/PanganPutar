@@ -1,0 +1,10 @@
+{
+  "phase": "fresh reload; four core tabs at 320/375/600/1280; resume payment simulation at 320",
+  "flutter_exception_messages": 0,
+  "unhandled_javascript_exceptions": 0,
+  "backend_error_urls": [
+    "http://10.0.2.2:3000/api/listings?limit=48",
+    "http://10.0.2.2:3000/api/payments/midtrans/snap"
+  ],
+  "known_development_only_event": "One disposed EngineFlutterView assertion occurred during hot restart earlier, not reproduced in this fresh-reload pass."
+}

@@ -1,0 +1,11 @@
+{
+  "FIREBASE_API_KEY": "your-web-api-key",
+  "FIREBASE_APP_ID": "1:1234567890:web:abcdef",
+  "FIREBASE_MESSAGING_SENDER_ID": "1234567890",
+  "FIREBASE_PROJECT_ID": "panganputar-prod",
+  "FIREBASE_AUTH_DOMAIN": "panganputar-prod.firebaseapp.com",
+  "FIREBASE_STORAGE_BUCKET": "panganputar-prod.appspot.com",
+  "FIREBASE_MEASUREMENT_ID": "",
+  "FIREBASE_FUNCTIONS_REGION": "asia-southeast1",
+  "PRODUCTION_MODE": "true"
+}
