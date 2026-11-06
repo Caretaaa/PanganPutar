@@ -271,14 +271,19 @@ class _MainShellState extends State<_MainShell> {
     (Icons.person_outline, Icons.person, 'Akun'),
   ];
 
-  bool get _providerHome =>
-      !widget.isProduction && widget.session.role == 'penyedia';
+  /// Tab pertama mengikuti peran: penyedia mendapat Area Penyedia,
+  /// penerima mendapat feed Beranda. Produksi membaca role Firebase,
+  /// demo membaca role sesi lokal.
+  bool get _providerHome => widget.isProduction
+      ? widget.auth.role == 'penyedia'
+      : widget.session.role == 'penyedia';
 
   @override
   void initState() {
     super.initState();
     _index = widget.initialIndex.clamp(0, _titles.length - 1);
     widget.session.addListener(_onSessionChanged);
+    widget.auth.addListener(_onSessionChanged);
   }
 
   void _onSessionChanged() {
@@ -288,6 +293,7 @@ class _MainShellState extends State<_MainShell> {
   @override
   void dispose() {
     widget.session.removeListener(_onSessionChanged);
+    widget.auth.removeListener(_onSessionChanged);
     super.dispose();
   }
 
@@ -326,14 +332,16 @@ class _MainShellState extends State<_MainShell> {
     final providerHome = _providerHome;
     final destinations = [
       if (providerHome)
-        (Icons.storefront_outlined, Icons.storefront, 'Penyedia')
+        (Icons.storefront_outlined, Icons.storefront, 'Area Penyedia')
       else
         _destinations.first,
       ..._destinations.skip(1),
     ];
     final pages = [
       if (providerHome)
-        const ProviderScreen()
+        widget.isProduction
+            ? const ProviderProduksiView()
+            : const ProviderScreen()
       else
         HomeScreen(
           api: widget.api,

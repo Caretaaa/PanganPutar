@@ -576,10 +576,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     ),
                     const SizedBox(height: 4),
                     if (name != null)
-                      Text(
-                        '$name • $role',
-                        style: theme.textTheme.bodySmall,
-                      ),
+                      Text('$name • $role', style: theme.textTheme.bodySmall),
                     if (auth.profileError != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 2),
@@ -604,6 +601,10 @@ class _AccountScreenState extends State<AccountScreen> {
 
             // Face verification & weekly quota (server enforces)
             _buildFaceCard(context, auth),
+            const SizedBox(height: AppTokens.gapCard),
+
+            // Satu akun, dua pengalaman: penerima ↔ penyedia.
+            _buildRoleSwitchCard(context, auth, role, name),
             const SizedBox(height: AppTokens.gapCard),
 
             // My Store (penyedia)
@@ -636,10 +637,7 @@ class _AccountScreenState extends State<AccountScreen> {
             padding: const EdgeInsets.all(18),
             child: Column(
               children: [
-                Text(
-                  'Masuk akun produksi',
-                  style: theme.textTheme.titleMedium,
-                ),
+                Text('Masuk akun produksi', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 8),
                 Text(
                   'Gunakan Google untuk membuat pesanan nyata, menyimpan '
@@ -702,6 +700,86 @@ class _AccountScreenState extends State<AccountScreen> {
         const SizedBox(height: AppTokens.gapCard),
         _buildTautan(context),
       ],
+    );
+  }
+
+  /// Satu akun Google bisa memakai dua pengalaman: penerima dan penyedia.
+  /// Perpindahan peran tersimpan di profil Firestore sehingga nav shell
+  /// langsung menampilkan Area Penyedia atau feed Beranda.
+  Widget _buildRoleSwitchCard(
+    BuildContext context,
+    PanganAuthService auth,
+    String role,
+    String? name,
+  ) {
+    final theme = Theme.of(context);
+    final isProvider = role == 'penyedia';
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  isProvider
+                      ? Icons.storefront_outlined
+                      : Icons.store_mall_directory_outlined,
+                  size: 20,
+                  color: AppColors.textSecondary(theme.brightness),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  isProvider ? 'Mode Penyedia' : 'Mulai berjualan',
+                  style: theme.textTheme.titleMedium,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              isProvider
+                  ? 'Anda sedang memakai Area Penyedia. Beralih ke mode '
+                        'penerima untuk menjelajah dan memesan makanan.'
+                  : 'Buka Area Penyedia untuk menerbitkan penawaran, mengelola '
+                        'stok, dan memindai QR pengambilan. Akun tetap sama.',
+              style: theme.textTheme.bodySmall?.copyWith(height: 1.45),
+            ),
+            const SizedBox(height: 12),
+            FilledButton.tonal(
+              onPressed: auth.busy
+                  ? null
+                  : () async {
+                      final messenger = ScaffoldMessenger.of(context);
+                      try {
+                        await auth.updateProfile(
+                          name: (name?.trim().isNotEmpty ?? false)
+                              ? name!.trim()
+                              : 'Pengguna',
+                          role: isProvider ? 'penerima' : 'penyedia',
+                        );
+                        messenger.showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              isProvider
+                                  ? 'Beralih ke mode penerima.'
+                                  : 'Area Penyedia terbuka.',
+                            ),
+                          ),
+                        );
+                      } catch (error) {
+                        messenger.showSnackBar(
+                          SnackBar(content: Text('$error')),
+                        );
+                      }
+                    },
+              child: Text(
+                isProvider ? 'Beralih ke Mode Penerima' : 'Buka Area Penyedia',
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

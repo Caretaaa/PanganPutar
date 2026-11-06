@@ -34,7 +34,7 @@ class ProviderHubScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Mode penyedia')),
       body: AppContentFrame(
         child: ServicesHolder.of(context).config.isProduction
-            ? const _ProviderProduksiView()
+            ? const ProviderProduksiView()
             : const ProviderScreen(),
       ),
     );
@@ -742,14 +742,14 @@ class _FormVerifikasiScreenState extends State<_FormVerifikasiScreen> {
 
 typedef _Dashboard = ({StoreProfile? toko, List<FoodListing> penawaran});
 
-class _ProviderProduksiView extends StatefulWidget {
-  const _ProviderProduksiView();
+class ProviderProduksiView extends StatefulWidget {
+  const ProviderProduksiView();
 
   @override
-  State<_ProviderProduksiView> createState() => _ProviderProduksiViewState();
+  State<ProviderProduksiView> createState() => ProviderProduksiViewState();
 }
 
-class _ProviderProduksiViewState extends State<_ProviderProduksiView> {
+class ProviderProduksiViewState extends State<ProviderProduksiView> {
   PanganDataService get _data => ServicesHolder.of(context).data;
   late Future<_Dashboard> _future;
 

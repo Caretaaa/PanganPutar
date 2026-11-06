@@ -7,7 +7,7 @@ import '../services/api_client.dart';
 import '../services/contracts.dart';
 import '../widgets/app_holders.dart';
 import '../widgets/async_view.dart';
-import '../widgets/listing_tile.dart';
+import '../widgets/listing_grid_tile.dart';
 import 'detail_screen.dart';
 
 const categories = [
@@ -242,67 +242,83 @@ class _ExploreScreenState extends State<ExploreScreen> {
             child: const Text('Hapus semua filter'),
           ),
           errorTitle: 'Gagal memuat hasil',
-          builder: (context, items) => RefreshIndicator(
-            onRefresh: () async => _apply(),
-            child: ListView.builder(
-              padding: const EdgeInsets.fromLTRB(
-                20,
-                0,
-                20,
-                AppTokens.gapSection,
-              ),
-              itemCount: items.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Wrap(
-                      spacing: 12,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        Text(
-                          '${items.length} penawaran',
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        if (_filterAktif)
-                          TextButton(
-                            onPressed: _reset,
-                            child: const Text('Atur ulang'),
+          builder: (context, items) {
+            // Height follows text scale so the compact card never overflows.
+            final textScale = MediaQuery.textScalerOf(context).scale(14) / 14;
+            final tileExtent = (252 + (textScale - 1) * 130).clamp(
+              252.0,
+              400.0,
+            );
+            return RefreshIndicator(
+              onRefresh: () async => _apply(),
+              child: CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                    sliver: SliverToBoxAdapter(
+                      child: Wrap(
+                        spacing: 12,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Text(
+                            '${items.length} penawaran',
+                            style: Theme.of(context).textTheme.titleSmall,
                           ),
-                        IconButton(
-                          tooltip: 'Muat ulang hasil',
-                          onPressed: _apply,
-                          icon: const Icon(Icons.refresh),
-                        ),
-                      ],
+                          if (_filterAktif)
+                            TextButton(
+                              onPressed: _reset,
+                              child: const Text('Atur ulang'),
+                            ),
+                          IconButton(
+                            tooltip: 'Muat ulang hasil',
+                            onPressed: _apply,
+                            icon: const Icon(Icons.refresh),
+                          ),
+                        ],
+                      ),
                     ),
-                  );
-                }
-                final i = index - 1;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: AppTokens.gapCard),
-                  child: ListingTile(
-                    item: items[i],
-                    verified:
-                        !widget.isProduction &&
-                        providers.isVerified(items[i].providerId),
-                    storeName: widget.isProduction
-                        ? null
-                        : providers.profileOf(items[i].providerId)?.namaToko,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => DetailScreen(
-                          api: widget.api,
-                          listingId: items[i].id,
-                          fallback: items[i],
+                  ),
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(
+                      20,
+                      0,
+                      20,
+                      AppTokens.gapSection,
+                    ),
+                    sliver: SliverGrid.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        mainAxisExtent: tileExtent,
+                      ),
+                      itemCount: items.length,
+                      itemBuilder: (context, i) => ListingGridTile(
+                        item: items[i],
+                        verified:
+                            !widget.isProduction &&
+                            providers.isVerified(items[i].providerId),
+                        storeName: widget.isProduction
+                            ? null
+                            : providers
+                                  .profileOf(items[i].providerId)
+                                  ?.namaToko,
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => DetailScreen(
+                              api: widget.api,
+                              listingId: items[i].id,
+                              fallback: items[i],
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                );
-              },
-            ),
-          ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
