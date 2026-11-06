@@ -13,9 +13,11 @@ class FaceActionException implements Exception {
   String toString() => message;
 }
 
-/// Server-side face identity matching through Cloud Functions + AWS
-/// Rekognition. The selfie is sent only for the duration of the check; the
-/// server stores the face template/reference, never the raw image.
+/// Server-side face identity matching through Cloud Functions. Two paths:
+/// - AWS Rekognition (image pipeline, when AWS credentials are configured).
+/// - On-device embedding (1:N cosine match in Firestore) — the client computes
+/// the embedding with TFLite and uploads only the vector, never the image.
+/// The server stores the face template/reference, never the raw image.
 class FirebaseFaceVerificationService implements FaceVerificationGateway {
   FirebaseFaceVerificationService._();
   static final instance = FirebaseFaceVerificationService._();
@@ -39,6 +41,29 @@ class FirebaseFaceVerificationService implements FaceVerificationGateway {
       final res = await callable.call(<String, dynamic>{
         'imageBase64': base64Encode(imageBytes),
         'contentType': 'image/jpeg',
+      });
+      return _parse(res.data);
+    } on FirebaseFunctionsException catch (error) {
+      throw FaceActionException(_message(error));
+    } on FaceActionException {
+      rethrow;
+    } catch (_) {
+      throw const FaceActionException(
+        'Verifikasi wajah tidak terjangkau. Periksa koneksi lalu coba lagi.',
+      );
+    }
+  }
+
+  /// On-device path: upload only the embedding vector. The server performs
+  /// 1:N cosine matching against stored face templates in Firestore.
+  Future<FaceVerificationResult> verifyEmbedding(List<double> embedding) async {
+    if (embedding.isEmpty) {
+      throw const FaceActionException('Wajah belum dapat diproses. Coba lagi.');
+    }
+    try {
+      final callable = _functions.httpsCallable('verifyFace');
+      final res = await callable.call(<String, dynamic>{
+        'embedding': embedding,
       });
       return _parse(res.data);
     } on FirebaseFunctionsException catch (error) {

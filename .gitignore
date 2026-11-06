@@ -53,3 +53,8 @@ app.*.map.json
 .env.*
 !.env.example
 config/supabase.local.json
+
+# Firebase Functions build output & deps
+firebase/functions/node_modules/
+firebase/functions/lib/
+android/build/

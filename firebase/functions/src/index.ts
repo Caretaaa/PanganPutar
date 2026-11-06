@@ -223,15 +223,139 @@ export const createStore = onCall({ region: 'asia-southeast1' }, async (request)
   return { storeId: ref.id, store };
 });
 
-// ---------- Face verification (AWS Rekognition) ----------
+// ---------- Face verification (AWS Rekognition OR on-device embedding) ----------
+// Two paths:
+//  - `data.embedding`: client-computed TFLite embedding (no AWS needed).
+//    The server does 1:N cosine matching over `face_embeddings` in Firestore.
+//  - `data.imageBase64`: AWS Rekognition search/index (requires AWS creds).
 function rekognition(): RekognitionClient | null {
   if (!process.env.AWS_REGION || !process.env.AWS_ACCESS_KEY_ID) return null;
   return new RekognitionClient({ region: process.env.AWS_REGION });
 }
 
+// Cosine threshold tuned for MobileFaceNet-style normalized embeddings.
+// Lower = more permissive. Tune per pilot data (FAR/FRR).
+const FACE_EMBED_MATCH_THRESHOLD = Number(process.env.FACE_EMBED_MATCH_THRESHOLD || '0.42');
+
+function normalizeVector(v: number[]): number[] {
+  let norm = 0;
+  for (const x of v) norm += x * x;
+  norm = Math.sqrt(norm);
+  if (!isFinite(norm) || norm <= 0) throw new HttpsError('invalid-argument', 'Wajah belum dapat diproses. Coba lagi.');
+  return v.map((x) => x / norm);
+}
+
+function cosine(a: number[], b: number[]): number {
+  let dot = 0;
+  let na = 0;
+  let nb = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+    na += a[i] * a[i];
+    nb += b[i] * b[i];
+  }
+  return dot / (Math.sqrt(na) * Math.sqrt(nb) || 1);
+}
+
+async function verifyFaceByEmbedding(uid: string, rawVec: unknown) {
+  if (!Array.isArray(rawVec) || rawVec.length < 64 || rawVec.length > 1024) {
+    throw new HttpsError('invalid-argument', 'Wajah belum dapat diproses. Coba lagi.');
+  }
+  const vec = normalizeVector(rawVec.map(Number));
+  if (vec.some((x) => !isFinite(x))) {
+    throw new HttpsError('invalid-argument', 'Wajah belum dapat diproses. Coba lagi.');
+  }
+
+  // 1:N match against stored templates. Honesty note: fine at pilot scale;
+  // at thousands of identities this scan must move to a vector index.
+  const snap = await db.collection('face_embeddings').get();
+  let faceId = '';
+  let existing = false;
+  let score: number | null = null;
+  let storedDoc: FirebaseFirestore.QueryDocumentSnapshot | null = null;
+  for (const doc of snap.docs) {
+    const data = doc.data() as any;
+    const stored = Array.isArray(data?.vector) ? (data.vector as number[]) : null;
+    if (!stored || stored.length !== vec.length) continue;
+    const sim = cosine(vec, stored);
+    if (sim >= FACE_EMBED_MATCH_THRESHOLD && sim > (score ?? -1)) {
+      score = sim;
+      faceId = doc.id;
+      existing = true;
+      storedDoc = doc;
+    }
+  }
+
+  if (!faceId) {
+    // New identity: random id, owned by this account.
+    faceId = `emb_${crypto.randomBytes(12).toString('hex')}`;
+    existing = false;
+    score = null;
+  }
+
+  const batch = db.batch();
+  const now = new Date();
+  if (storedDoc) {
+    // Refresh the vector only when the owner checks in (stability), never
+    // overwrite a template owned by someone else.
+    const data = storedDoc.data() as any;
+    if (data?.ownerUid === uid) {
+      const mixed = normalizeVector(
+        vec.map((x, i) => x + (data.vector[i] ?? 0) * 0.05),
+      );
+      batch.set(db.collection('face_embeddings').doc(faceId), {
+        ownerUid: uid,
+        vector: mixed,
+        updated_at: FieldValue.serverTimestamp(),
+      }, { merge: true });
+    }
+  } else {
+    batch.set(db.collection('face_embeddings').doc(faceId), {
+      ownerUid: uid,
+      vector: vec,
+      created_at: FieldValue.serverTimestamp(),
+      updated_at: FieldValue.serverTimestamp(),
+    });
+    batch.set(db.collection('face_identities').doc(faceId), {
+      ownerUid: uid,
+      method: 'on-device-embedding',
+      created_at: FieldValue.serverTimestamp(),
+    });
+  }
+  batch.set(db.collection('profiles').doc(uid), {
+    face_identity_id: faceId,
+    face_verified_at: Timestamp.fromDate(now),
+    updated_at: FieldValue.serverTimestamp(),
+  }, { merge: true });
+  await batch.commit();
+
+  const week = weekKey(now);
+  const claimRef = db.collection('face_identities').doc(faceId).collection('weekly_claims').doc(week);
+  const claimSnap = await claimRef.get();
+  const claim = claimSnap.exists ? (claimSnap.data() as any) : { porsi: 0, pesanan: 0 };
+
+  return {
+    faceId,
+    verifiedAt: now.toISOString(),
+    matchScore: score,
+    existingFace: existing,
+    weeklyPorsi: claim.porsi || 0,
+    weeklyPesanan: claim.pesanan || 0,
+    maxPorsiPerWeek: MAX_PORSI_WEEK,
+    maxPesananPerWeek: MAX_PESANAN_WEEK,
+    weekKey: week,
+  };
+}
+
 export const verifyFace = onCall({ region: 'asia-southeast1' }, async (request) => {
   const uid = requireAuth(request);
-  const { imageBase64 } = request.data || {};
+  const data = request.data || {};
+
+  if ('embedding' in data && data.embedding) {
+    return verifyFaceByEmbedding(uid, data.embedding);
+  }
+
+  const { imageBase64 } = data;
   if (!imageBase64) throw new HttpsError('invalid-argument', 'Foto selfie kosong.');
 
   const collectionId = process.env.AWS_REKOGNITION_COLLECTION || 'panganputar-faces';

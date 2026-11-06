@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -18,6 +19,7 @@ import 'services/contracts.dart';
 import 'services/device_identity.dart';
 import 'services/firebase_auth_service.dart';
 import 'services/firebase_data_service.dart';
+import 'services/device_face_service.dart';
 import 'services/firebase_face_service.dart';
 import 'services/firebase_payment_service.dart';
 import 'services/firebase_settings.dart';
@@ -62,7 +64,13 @@ void main() async {
   // Production payments go through Firebase Cloud Functions (Midtrans server
   // key lives in Secret Manager). The client can never mark an order paid.
   final payments = FirebasePaymentService.instance;
-  final face = FirebaseFaceVerificationService.instance;
+  // On-device face embedding (TFLite) on Android; the AWS Rekognition image
+  // path is only available on platforms where tflite_flutter cannot run.
+  final bool faceUsesDevice =
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+  final FaceVerificationGateway face = faceUsesDevice
+      ? DeviceFaceVerificationService.instance
+      : FirebaseFaceVerificationService.instance;
 
   // Build ServicesHolder (async init) lalu jalankan app
   final holder = await ServicesHolderFactory.create(

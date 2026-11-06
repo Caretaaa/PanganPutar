@@ -36,6 +36,11 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Stored face embedding templates. Private — server (Admin SDK) only.
+    match /face_embeddings/{id} {
+      allow read, write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

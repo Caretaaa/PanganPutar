@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "461060573851",
+    "project_id": "panganputar-a2812",
+    "storage_bucket": "panganputar-a2812.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461060573851:android:ecdae883344e0042c1943e",
+        "android_client_info": {
+          "package_name": "id.panganputar.panganputar_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDR__RW-hsf8jSJXVtzt3QCwZ_m-woXb8U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

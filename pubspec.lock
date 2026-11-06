@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  archive:
+    dependency: transitive
+    description:
+      name: archive
+      sha256: de5ac590b8155e4e676088d714bd41ea620449a6adc0f7950c5073874b287ddb
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.6.0"
   async:
     dependency: transitive
     description:
@@ -365,6 +373,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.7.1"
+  google_mlkit_commons:
+    dependency: transitive
+    description:
+      name: google_mlkit_commons
+      sha256: d9c044926baf379482ba43eae8f004dddeb4338ace90bb09e89b1e7cbe453c56
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  google_mlkit_face_detection:
+    dependency: "direct main"
+    description:
+      name: google_mlkit_face_detection
+      sha256: c7f9637c8ef3c74f41d3d06947d009af3b4759e88d2ebca66e9495b4b3d8b5cb
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   gotrue:
     dependency: transitive
     description:
@@ -389,6 +413,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  image:
+    dependency: "direct main"
+    description:
+      name: image
+      sha256: "89ed75b2f8231fe676808c5564f9590d728024ded7ac782a7ed8474f1c95b72a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.12.0"
   image_picker:
     dependency: "direct main"
     description:
@@ -613,6 +645,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.0"
+  posix:
+    dependency: transitive
+    description:
+      name: posix
+      sha256: "613646d076944f3acc125830af935b48d4b8a57a388691547bbfd25b434f4d63"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.5.4"
   postgrest:
     dependency: transitive
     description:
@@ -637,6 +677,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
+  quiver:
+    dependency: transitive
+    description:
+      name: quiver
+      sha256: ea0b925899e64ecdfbf9c7becb60d5b50e706ade44a85b2363be2a22d88117d2
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.2"
   realtime_client:
     dependency: transitive
     description:
@@ -786,6 +834,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.12"
+  tflite_flutter:
+    dependency: "direct main"
+    description:
+      name: tflite_flutter
+      sha256: "0bba9040d8decda0960d7abf8eabf32243bf092bc7d0084e8e19681866b0bdbe"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.12.1"
   typed_data:
     dependency: transitive
     description:
